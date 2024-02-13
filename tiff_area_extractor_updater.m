@@ -162,7 +162,7 @@ bpm= 60 ./ periodsSeconds;
 %AI index
 meanPeriod_IBS= mean(periodsSeconds);
 stdPeriodFrames_IBS= std(periodsSeconds);
-CV = stdPeriodFrames/meanPeriodFrames;
+CV = stdPeriodFrames_IBS/meanPeriod_IBS;
 AI = (CV^2) / 2;
 
 disp(['Mean Period: ' num2str(meanPeriodFrames) ' frames']);
