@@ -30,6 +30,7 @@ clear all;
 [filename, path]= uigetfile('*.tif', 'Choose a TIFF file'); %Choose your MASKED .tiff file after you have scaled it back to its original resolution
 fullFilePath= fullfile(path, filename);
 
+mean_corrector_value=0.9;
 % Reading TIFF file
 info= imfinfo(fullFilePath);
 numFrames= numel(info);
@@ -103,7 +104,7 @@ function updatePlots(value, smoothedData, frameRate, whitePixelCountMatrix, ax1,
     smoothedData= movmean(whitePixelCountMatrix(:, 2), windowSize);
 
     averageSmoothedData= mean(smoothedData);
-    [minValues, minPositions]= findpeaks(-smoothedData, 'MinPeakHeight', -averageSmoothedData * 0.9);
+    [minValues, minPositions]= findpeaks(-smoothedData, 'MinPeakHeight', -averageSmoothedData * mean_corrector_value);
 
     minPositions= mergeClosePeaks(minPositions, mergevalue);
     peakDifferences= diff(minPositions);
@@ -142,7 +143,7 @@ function finalizeParameters(uiFig, whitePixelCountMatrix, numFrames)
 
 averageSmoothedData= mean(smoothedData);
 
-[minValues, minPositions]= findpeaks(-smoothedData, 'MinPeakHeight', -averageSmoothedData*0.9);
+[minValues, minPositions]= findpeaks(-smoothedData, 'MinPeakHeight', -averageSmoothedData*mean_corrector_value);
 
 mergevalue=mergeValueLabel;
 minPositions= mergeClosePeaks(minPositions, mergevalue);
@@ -156,9 +157,13 @@ frameRate= 125;
 periodsSeconds= periodsFrames / frameRate;
 bpm= 60 ./ periodsSeconds;
 
+%AI index
+CV = stdPeriodFrames/meanPeriodFrames;
+AI = (CV^2) / 2;
+
 disp(['Mean Period: ' num2str(meanPeriodFrames) ' frames']);
 disp(['STD of Periods: ' num2str(stdPeriodFrames) ' frames']);
-
+disp(['AI: ' num2str(mean_corrector_value) ' frames']);
 % Plot volume graph
 figure(1);
 plot(smoothedData, 'r', 'LineWidth', 2);
