@@ -1,6 +1,6 @@
 close all;
 clear all;
-% After running the Python script, the next step is to reinsert 
+% After running the tracking Python script, the next step is to reinsert 
 % the output TIFF into ImageJ/Fiji and adjust its scale back 
 % to the original resolution. For example, if the initial area 
 % was 94 by 100, open the mask in ImageJ/Fiji, go to scale, 
@@ -36,7 +36,7 @@ minPositionsg= [];
 global mean_corrector_value;
 mean_corrector_value=0.9;
 
-[filename, path]= uigetfile('*.tif', 'Choose a TIFF file'); %Choose your MASKED .tiff file after you have scaled it back to its original resolution
+[filename, path] = uigetfile('*.tif*', 'Choose a TIFF file'); % Choose your MASKED .tiff file after you have scaled it back to its original resolution
 fullFilePath= fullfile(path, filename);
 
 % Reading TIFF file
@@ -199,8 +199,6 @@ end
     %AI index
     meanPeriod_IBS= mean(periodsSeconds);
     stdPeriodFrames_IBS= std(periodsSeconds);
-    disp(meanPeriod_IBS);
-    disp(stdPeriodFrames_IBS);
     CV= stdPeriodFrames_IBS/meanPeriod_IBS;
     AI= (CV^2)/2;
 
