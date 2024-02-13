@@ -30,6 +30,8 @@ clear all;
 [filename, path]= uigetfile('*.tif', 'Choose a TIFF file'); %Choose your MASKED .tiff file after you have scaled it back to its original resolution
 fullFilePath= fullfile(path, filename);
 
+global mean_corrector_value;
+
 mean_corrector_value=0.9;
 % Reading TIFF file
 info= imfinfo(fullFilePath);
@@ -86,7 +88,7 @@ doneButton= uibutton(uiFig, 'push', 'Text', 'Done', 'Position', [355, 140, 100, 
 
 % Callback function for slider value change
 function updatePlots(value, smoothedData, frameRate, whitePixelCountMatrix, ax1, ax2)
-    global sliderMergeValue currentWindowSize;
+    global sliderMergeValue currentWindowSize mean_corrector_value;
 
     if isobject(value)
         windowSize= round(value.Value);
@@ -134,7 +136,7 @@ end
 
 % Done button!
 function finalizeParameters(uiFig, whitePixelCountMatrix, numFrames)
-    global currentWindowSize mergeValueLabel;
+    global currentWindowSize mergeValueLabel mean_corrector_value;
 
     close(uiFig);
 
@@ -158,12 +160,14 @@ periodsSeconds= periodsFrames / frameRate;
 bpm= 60 ./ periodsSeconds;
 
 %AI index
+meanPeriod_IBS= mean(periodsSeconds);
+stdPeriodFrames_IBS= std(periodsSeconds);
 CV = stdPeriodFrames/meanPeriodFrames;
 AI = (CV^2) / 2;
 
 disp(['Mean Period: ' num2str(meanPeriodFrames) ' frames']);
 disp(['STD of Periods: ' num2str(stdPeriodFrames) ' frames']);
-disp(['AI: ' num2str(mean_corrector_value) ' frames']);
+disp(['AI: ' num2str(mean_corrector_value)]);
 % Plot volume graph
 figure(1);
 plot(smoothedData, 'r', 'LineWidth', 2);
@@ -187,10 +191,10 @@ ylabel('Beats Per Minute');
     disp(['STD of BPM: ' num2str(stdBPM)]);
 
     %display the mean and STD of MIN volume
-    peakVolumes= smoothedData(minPositions); %already merged sorted
+    peakAreas= smoothedData(minPositions); %already merged sorted
 
-    meanMINVolume= mean(peakVolumes);
-    stdMINVolume= std(peakVolumes);
+    meanMINVolume= mean(peakAreas);
+    stdMINVolume= std(peakAreas);
     disp(['Mean Minimum Volume: ' num2str(meanMINVolume) ' \mu m^2']);
     disp(['STD of Minimum Volume: ' num2str(stdMINVolume) ' \mu m^2']);
 
@@ -200,10 +204,10 @@ ylabel('Beats Per Minute');
     %Filter out two points that occur right next to one another
     mergevalue=mergeValueLabel;
     maxPositions= mergeClosePeaks(maxPositions, mergevalue);
-    peakMAXVolumes= smoothedData(maxPositions);
+    peakMAXAreas= smoothedData(maxPositions);
 
-    meanMaxVolume= mean(peakMAXVolumes);
-    stdMaxVolume= std(peakMAXVolumes);
+    meanMaxVolume= mean(peakMAXAreas);
+    stdMaxVolume= std(peakMAXAreas);
     disp(['Mean Minimum Volume: ' num2str(meanMaxVolume) ' \mu m^2']);
     disp(['STD of Minimum Volume: ' num2str(stdMaxVolume) ' \mu m^2']);
 
