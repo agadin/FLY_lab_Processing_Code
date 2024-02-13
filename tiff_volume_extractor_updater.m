@@ -165,7 +165,7 @@ AI = (CV^2) / 2;
 
 disp(['Mean Period: ' num2str(meanPeriodFrames) ' frames']);
 disp(['STD of Periods: ' num2str(stdPeriodFrames) ' frames']);
-disp(['AI: ' num2str(mean_corrector_value) ' frames']);
+disp(['AI: ' num2str(mean_corrector_value)]);
 % Plot volume graph
 figure(1);
 plot(smoothedData, 'r', 'LineWidth', 2);
