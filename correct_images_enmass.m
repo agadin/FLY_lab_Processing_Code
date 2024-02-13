@@ -67,7 +67,7 @@ end
 slider1= uicontrol('Style', 'slider', 'Min', 0, 'Max', 2, 'Value', 0, ...
     'Position', [700, 500, 120, 20], 'Callback', @updateUI, 'Tag', 'slider1');
 
-slider2= uicontrol('Style', 'slider', 'Min', 0, 'Max', 2, 'Value', 0, ...
+slider2= uicontrol('Style', 'slider', 'Min', 0, 'Max', 2, 'Value', 0.01, ...
     'Position', [700, 450, 120, 20], 'Callback', @updateUI, 'Tag', 'slider2');
 
 % done button!
@@ -185,7 +185,7 @@ function applySettingsAndSave(~, ~)
 
     radiusMultiplier= get(findobj('Tag', 'slider1'), 'Value');
     ratioMultiplier= get(findobj('Tag', 'slider2'), 'Value');
-
+    clf;
     % apply the settings to all frames with holes
     for frame= framesWithHoles
         img= correctedFrames(:,:,frame);
