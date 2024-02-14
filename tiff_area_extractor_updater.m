@@ -74,21 +74,21 @@ mergeValueLabel= uilabel(uiFig, 'Text', ['Current Merge Value: ' num2str(mergeva
 
 global sliderWindowSize; % very efficent code
 
-sliderWindowSize= uislider(uiFig, 'Limits', [1, 30], 'ValueChangedFcn', @(src, ~) updatePlots(src, smoothedData, frameRate, whitePixelCountMatrix, ax1, ax2));
+sliderWindowSize= uislider(uiFig, 'Limits', [1, 30], 'ValueChangedFcn', @(src, ~) updatePlots(1, src, smoothedData, frameRate, whitePixelCountMatrix, ax1, ax2));
 sliderWindowSize.Position= [50, 115, 700, 3];
 sliderWindowSize.Value= windowSize;
 sliderWindowSize.MajorTicks= 1:5:30; 
 sliderWindowSize.MinorTicks= 1:30;
 
 global sliderMergeValue;
-sliderMergeValue= uislider(uiFig, 'Limits', [1, 20], 'ValueChangedFcn', @(src, ~) updatePlots(src, smoothedData, frameRate, whitePixelCountMatrix, ax1, ax2));
+sliderMergeValue= uislider(uiFig, 'Limits', [1, 20], 'ValueChangedFcn', @(src, ~) updatePlots(2, src, smoothedData, frameRate, whitePixelCountMatrix, ax1, ax2));
 sliderMergeValue.Position= [50, 60, 700, 3];
 sliderMergeValue.Value= mergevalue;
 sliderMergeValue.MajorTicks= 1:5:20; 
 sliderMergeValue.MinorTicks= 1:20; 
 
 %Intialize first plot
-updatePlots(windowSize, smoothedData, frameRate, whitePixelCountMatrix, ax1, ax2);
+updatePlots(3, [windowSize mergevalue], smoothedData, frameRate, whitePixelCountMatrix, ax1, ax2);
 
 
 % Done Button!
@@ -102,23 +102,50 @@ doneButton= uibutton(uiFig, 'push', 'Text', 'Done', 'Position', [355, 140, 100, 
 undoButton= uibutton(uiFig, 'push', 'Text', 'Undo', 'Position', [455, 140, 100, 30], 'ButtonPushedFcn', @(src, event) undoLastManualInput(whitePixelCountMatrix, ax1));
 
 % Callback function for slider value change
-function updatePlots(value, smoothedData, frameRate, whitePixelCountMatrix, ax1, ax2)
-    global sliderMergeValue currentWindowSize mean_corrector_value path ;
+function updatePlots(slider, value, smoothedData, frameRate, whitePixelCountMatrix, ax1, ax2)
+    global sliderMergeValue currentWindowSize mean_corrector_value path sliderWindowSize;
 
     
+    if slider==1
+        if isobject(sliderMergeValue)
+            mergevalue= round(sliderMergeValue.Value);
+        else
+            mergevalue=sliderMergeValue;
+        end
 
-    if isobject(value)
-        windowSize= round(value.Value);
-        currentWindowSize= windowSize;
-        updateWindowSizeLabel(windowSize);
-        mergevalue= round(sliderMergeValue.Value);
-        updateMergeValueLabel(mergevalue);
+        if isobject(value)
+            windowSize= round(value.Value);
+            currentWindowSize= windowSize;
+            updateWindowSizeLabel(windowSize);
+            
+            
+        else
+            % stackoverflow told me to do this idk
+            windowSize= round(value);
+            currentWindowSize= windowSize;
+            sliderWindowSize=windowSize;
+        end
+    elseif slider==2
+        windowSize=currentWindowSize;
+        if isobject(value)
+            mergevalue= round(value.Value);
+            sliderMergeValue=mergevalue;
+            updateMergeValueLabel(mergevalue);
+            
+        else
+            % stackoverflow told me to do this idk
+            mergevalue= round(value);
+            sliderMergeValue=mergevalue;
+            updateMergeValueLabel(mergevalue);
+        end
     else
-        % stackoverflow told me to do this idk
-        windowSize= round(value);
-        currentWindowSize= windowSize;
-        mergevalue= round(sliderMergeValue.Value);
+        %beginning case
+        windowSize=value(1);
+        mergevalue=value(2);
+
     end
+
+
 
     smoothedData= movmean(whitePixelCountMatrix(:, 2), windowSize);
 
