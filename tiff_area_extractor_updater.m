@@ -126,6 +126,11 @@ function updatePlots(slider, value, smoothedData, frameRate, whitePixelCountMatr
             sliderWindowSize=windowSize;
         end
     elseif slider==2
+         if isobject(sliderMergeValue)
+            mergevalue= round(sliderMergeValue.Value);
+        else
+            mergevalue=sliderMergeValue;
+        end
         windowSize=currentWindowSize;
         if isobject(value)
             mergevalue= round(value.Value);
