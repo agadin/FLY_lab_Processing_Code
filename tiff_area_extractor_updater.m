@@ -245,7 +245,7 @@ end
     set(gcf, 'Position', [100, 100, 800, 375]);
     plot(timeInSeconds, smoothedData, 'r', 'LineWidth', 2);
     title('Change in Heart Area as a Function of Frames',FontWeight='bold',FontSize=15);
-    xlabel('Frame Number',FontWeight='bold',FontSize=14);
+    xlabel('Time(seconds)',FontWeight='bold',FontSize=14);
     ylabel('\mu m^2',FontWeight='bold',FontSize=14);
 
     % Plot BPM as a function of time
