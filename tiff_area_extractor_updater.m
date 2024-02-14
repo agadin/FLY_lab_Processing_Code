@@ -103,7 +103,7 @@ undoButton= uibutton(uiFig, 'push', 'Text', 'Undo', 'Position', [455, 140, 100, 
 
 % Callback function for slider value change
 function updatePlots(slider, value, smoothedData, frameRate, whitePixelCountMatrix, ax1, ax2)
-    global sliderMergeValue currentWindowSize mean_corrector_value path sliderWindowSize;
+    global sliderMergeValue currentWindowSize mean_corrector_value path sliderWindowSize currentMergeValue;
 
     
     if slider==1
@@ -112,7 +112,7 @@ function updatePlots(slider, value, smoothedData, frameRate, whitePixelCountMatr
         else
             mergevalue=sliderMergeValue;
         end
-
+        currentMergeValue=mergevalue;
         if isobject(value)
             windowSize= round(value.Value);
             currentWindowSize= windowSize;
@@ -126,12 +126,12 @@ function updatePlots(slider, value, smoothedData, frameRate, whitePixelCountMatr
             sliderWindowSize=windowSize;
         end
     elseif slider==2
-         if isobject(sliderMergeValue)
-            mergevalue= round(sliderMergeValue.Value);
+        currentWindowSize=sliderWindowSize;
+         if isobject(currentWindowSize)
+            windowSize= round(currentWindowSize.Value);
         else
-            mergevalue=sliderMergeValue;
-        end
-        windowSize=currentWindowSize;
+           windowSize=currentWindowSize;
+         end
         if isobject(value)
             mergevalue= round(value.Value);
             sliderMergeValue=mergevalue;
@@ -150,6 +150,8 @@ function updatePlots(slider, value, smoothedData, frameRate, whitePixelCountMatr
 
     end
 
+    currentMergeValue=mergevalue;
+    currentWindowSize=windowSize;
 
 
     smoothedData= movmean(whitePixelCountMatrix(:, 2), windowSize);
@@ -185,18 +187,17 @@ end
 
 % Done button!
 function finalizeParameters(uiFig, whitePixelCountMatrix, numFrames,ax1,ax2, manualInputButton)
-    global currentWindowSize mergeValueLabel mean_corrector_value manualPoints minPositionsg filename path;
+    global currentWindowSize mergeValueLabel mean_corrector_value manualPoints minPositionsg filename path currentMergeValue;
 
     close(uiFig);
 
     smoothedData= movmean(whitePixelCountMatrix(:, 2), [currentWindowSize, currentWindowSize]);
-
-
+    
     averageSmoothedData= mean(smoothedData);
     stdSmoothedData=std(smoothedData);
     [minValues, minPositions]= findpeaks(-smoothedData, 'MinPeakHeight', -averageSmoothedData*mean_corrector_value);
 
-mergevalue=mergeValueLabel;
+mergevalue=currentMergeValue;
 minPositions= mergeClosePeaks(minPositions, mergevalue);
 
 
@@ -277,7 +278,6 @@ end
     [maxValues, maxPositions]= findpeaks(smoothedData, 'MinPeakHeight', averageSmoothedData);
 
     %Filter out two points that occur right next to one another
-    mergevalue=mergeValueLabel;
     maxPositions= mergeClosePeaks(maxPositions, mergevalue);
     peakMAXAreas= smoothedData(maxPositions);
 
@@ -293,7 +293,7 @@ end
     if strcmpi(answer, 'Yes')
         dateStr= datestr(datetime('now'), 'mm_dd_HH_MM');
         newFilename= fullfile(path, [filename(1:end-4) '_data_' dateStr '.mat']);
-        save(newFilename, 'whitePixelCountMatrix', 'bpm', 'peakMAXAreas', 'peakAreas', 'AI', 'manualPoints', 'currentWindowSize', 'mergeValueLabel');
+        save(newFilename, 'whitePixelCountMatrix', 'bpm', 'peakMAXAreas', 'peakAreas', 'AI', 'manualPoints', 'currentWindowSize', 'currentMergeValue');
         disp('Results saved successfully.');
     else
         disp('Results not saved.');
