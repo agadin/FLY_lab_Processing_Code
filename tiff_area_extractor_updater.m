@@ -341,6 +341,7 @@ function manualInputPopup(whitePixelCountMatrix, ax)
 
     % Callback function for adding manual peak
 function addManualPeak(inputField, ax, manualInputFig)
+    global currentWindowSize;
     frameNumber= round(inputField.Value);
 
     if any(manualPoints == frameNumber)
@@ -355,7 +356,7 @@ function addManualPeak(inputField, ax, manualInputFig)
         hold(ax, 'off');
     else
         % Green dot addition
-        smoothedData= movmean(whitePixelCountMatrix(:, 2), windowSize);
+        smoothedData= movmean(whitePixelCountMatrix(:, 2),currentWindowSize);
         hold(ax, 'on');
         scatter(ax, frameNumber, smoothedData(frameNumber), 50, 'g', 'filled');
         hold(ax, 'off');
