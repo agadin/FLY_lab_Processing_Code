@@ -241,14 +241,14 @@ end
     
     % Plot Area graph
     figure(1);
+    timeInSeconds= (1:numFrames) / frameRate;
     set(gcf, 'Position', [100, 100, 800, 375]);
-    plot(smoothedData, 'r', 'LineWidth', 2);
+    plot(timeInSeconds, smoothedData, 'r', 'LineWidth', 2);
     title('Change in Heart Area as a Function of Frames',FontWeight='bold',FontSize=15);
     xlabel('Frame Number',FontWeight='bold',FontSize=14);
     ylabel('\mu m^2',FontWeight='bold',FontSize=14);
 
     % Plot BPM as a function of time
-    timeInSeconds= (1:numFrames) / frameRate;
     figure(2);
     set(gcf, 'Position', [100, 100, 800, 375]);
     plot(timeInSeconds(minPositions(1:end-1)), bpm, 'b', 'LineWidth', 2);
@@ -355,8 +355,9 @@ function addManualPeak(inputField, ax, manualInputFig)
         hold(ax, 'off');
     else
         % Green dot addition
+        smoothedData= movmean(whitePixelCountMatrix(:, 2), windowSize);
         hold(ax, 'on');
-        scatter(ax, frameNumber, whitePixelCountMatrix(frameNumber, 2), 50, 'g', 'filled');
+        scatter(ax, frameNumber, smoothedData(frameNumber), 50, 'g', 'filled');
         hold(ax, 'off');
         disp(['Manual peak added at ', num2str(frameNumber)])
         % Update minPositions in the axes app data
