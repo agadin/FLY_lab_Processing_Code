@@ -34,7 +34,7 @@ manualPoints= [];
 minPositionsg= [];
 
 global mean_corrector_value;
-mean_corrector_value=0.9;
+mean_corrector_value=0.8;
 
 [filename, path] = uigetfile('*.tif*', 'Choose a TIFF file'); % Choose your MASKED .tiff file after you have scaled it back to its original resolution
 fullFilePath= fullfile(path, filename);
@@ -161,7 +161,7 @@ function finalizeParameters(uiFig, whitePixelCountMatrix, numFrames,ax1,ax2, man
 
 
     averageSmoothedData= mean(smoothedData);
-
+    stdSmoothedData=std(smoothedData);
     [minValues, minPositions]= findpeaks(-smoothedData, 'MinPeakHeight', -averageSmoothedData*mean_corrector_value);
 
 mergevalue=mergeValueLabel;
@@ -231,6 +231,7 @@ end
     
     %Display average Area 
     fprintf('Average Area: %.2f µm^2\n', averageSmoothedData);
+    fprintf('STD Area: %.2f µm^2\n', stdSmoothedData);
 
     %display the mean and STD of MIN Area
     peakAreas= smoothedData(minPositions); %already merged sorted
