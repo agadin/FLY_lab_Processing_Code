@@ -34,7 +34,10 @@ manualPoints= [];
 minPositionsg= [];
 
 global mean_corrector_value;
-mean_corrector_value=0.8;
+mean_corrector_value=0.8; %this value controls how far away the peaks can 
+% be from the average of the total area adjust this value if peak height 
+% changes drastically overcourse of sample causing a group of peaks to be 
+% close to the average total area (and thus not being detected
 
 [filename, path] = uigetfile('*.tif*', 'Choose a TIFF file'); % Choose your MASKED .tiff file after you have scaled it back to its original resolution
 fullFilePath= fullfile(path, filename);
@@ -166,11 +169,13 @@ function updatePlots(slider, value, smoothedData, frameRate, whitePixelCountMatr
     plot(ax1, whitePixelCountMatrix(:, 2), 'b', 'LineWidth', 2);
     hold(ax1, 'on');
     plot(ax1, smoothedData, 'r', 'LineWidth', 2);
+    yline(ax1, averageSmoothedData*mean_corrector_value, '-.g', linewidth=2); 
+    disp(averageSmoothedData*mean_corrector_value)
     title(ax1, 'Diagnostic Original vs. Smoothed Data');
     xlabel(ax1, 'Frame Number');
     ylabel(ax1, '\mu m^2');
     scatter(ax1, minPositions, smoothedData(minPositions), 50, 'g', 'filled');
-    legend(ax1, 'Original Data', 'Smoothed Data', 'Peak Locations');
+    legend(ax1, 'Original Data', 'Smoothed Data', 'Peak Cutoff Line', 'Peak Locations', fontsize=12);
     hold(ax1, 'off');
 
     % Update bottom
@@ -271,8 +276,8 @@ end
 
     meanMINArea= mean(peakAreas);
     stdMINArea= std(peakAreas);
-    fprintf('Average Min Area: %.2f µm^2\n', meanMINArea);
-    fprintf('STD Min Area: %.2f µm^2\n', stdMINArea);
+    fprintf('Average Systolic Area: %.2f µm^2\n', meanMINArea);
+    fprintf('STD Systolic Area: %.2f µm^2\n', stdMINArea);
 
     %display the mean and STD of MAX Area
     [maxValues, maxPositions]= findpeaks(smoothedData, 'MinPeakHeight', averageSmoothedData);
@@ -283,8 +288,11 @@ end
 
     meanMaxArea= mean(peakMAXAreas);
     stdMaxArea= std(peakMAXAreas);
-    fprintf('Average Max Area: %.2f µm^2\n', meanMaxArea);
-    fprintf('STD Max Area: %.2f µm^2\n', stdMaxArea);
+    fprintf('Average Diastolic Area: %.2f µm^2\n', meanMaxArea);
+    fprintf('STD Diastolic Area: %.2f µm^2\n', stdMaxArea);
+    
+    fractional_shortening=((meanMaxArea-meanMINArea)/meanMaxArea)*100;
+    disp(['Fractional Shortening: ' num2str(fractional_shortening) '%']);
 
     answer= questdlg('Do you want to save the results to a file (optional)?', ...
                   'Save Results', ...
@@ -293,7 +301,7 @@ end
     if strcmpi(answer, 'Yes')
         dateStr= datestr(datetime('now'), 'mm_dd_HH_MM');
         newFilename= fullfile(path, [filename(1:end-4) '_data_' dateStr '.mat']);
-        save(newFilename, 'whitePixelCountMatrix', 'bpm', 'peakMAXAreas', 'peakAreas', 'AI', 'manualPoints', 'currentWindowSize', 'currentMergeValue');
+        save(newFilename, 'whitePixelCountMatrix', 'bpm', 'peakMAXAreas', 'peakAreas', 'AI', 'manualPoints', 'currentWindowSize', 'currentMergeValue', 'fractional_shortening');
         disp('Results saved successfully.');
     else
         disp('Results not saved.');
