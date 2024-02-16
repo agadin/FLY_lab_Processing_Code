@@ -1,4 +1,3 @@
-
 % Model correction
 % After running the Python script, the next step is to reinsert 
 % the output TIFF into ImageJ/Fiji and adjust its scale back 
@@ -13,7 +12,7 @@
 % fill and the bottom slider is the ratio between the volume of the mask
 % and the radius (ie bigger mask bigger relative radius for that image
 %% created by Alexander Gadin
-[filename, path]= uigetfile('*.tif', 'Choose a TIFF file');
+[filename, path]= uigetfile('*.tif*', 'Choose a TIFF file');
 global fullFilePath;
 fullFilePath= fullfile(path, filename);
 
