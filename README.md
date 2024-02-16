@@ -3,6 +3,12 @@
 * `Tiff_area_extractor_updater.m`- processes corrected masks and produces area, BPM, and arrhythmia index with a nice UI to allow automatic and manual data correction.
 * `IoU_Calculator.m`- Calculates IoU between uncorrected and corrected masks
 
+**Calculated Statistics:** `Mean/STDev Period (in frames)`, `arithmancy index`, `Mean/STDev BPM`, `Mean/STDev Systolic Area`,  `Mean/STDev Diastolic Area`, and `Fractional Shortening`
+
+**Produced Figures:** Heart Area verses Time and BPM verses Time
+
+**Advantages:** Automatic frame correction, simple UI for tuining peak and area calculations (along with the ability to mannually add points if desired), fast and simple results (saved to a `.mat` file!) 
+
 ## Preparing the mask for MATLAB processing
 > [!CAUTION]
 > Required step!
@@ -32,22 +38,29 @@ Run `tiff_area_extractor_updater.m` and when prompted upload the rescaled correc
 
 The upper figure displays the area over frames with two traces (original and smoothed) and green dots indicating the peaks identified by MATLAB. The lower figure illustrates the frequency of detected minimum peaks, revealing instances where MATLAB detected peaks in close proximity to one another. The upper slider facilitates data smoothing, visible in the changing upper figure’s red line. Smoothing is accomplished with a moving mean. The lower slider enables the merging of peaks within a certain distance of one another, known as the Merge
 Value. If the difference in frame numbers between two consecutive peaks are less by the Merge Value, the MATLAB code will replace both with a peak located at the average frame number of the two points.
- 
+
+ > [!NOTE]  
+> Peaks will only be detected below the dashed green line labeled "Peak Cutoff Line" on the top plot. If peaks should be appearing above this line adjust `mean_corrector_value` on line 37 in the code script
+
 You want to adjust the sliders to make sure each minimum peak has a green dot. Also you need to make sure there are no red bars on the bottom graph. These red bars indicate two consecutive detected peaks that are <20 frames apart. The goal is to keep the values for each slider as low as possible. You are also able to manually add peaks. By using the Manual Input Button and inputting the X coordinate (frame number)of peak you would like to add. After clicking okay, the peak will be added as shown by the addition of a green dot. After done adjusting the sliders and manually adding peaks, hit the done button in the UI. Two figures will appear along with output data to the command line. You are also given the option to save data to a `.mat` file.
 
  Here is an example of the expected output:
 
-Mean Period: 41.4167 frames
-STD of Periods: 16.8647 frames
-AI: 0.082904
-Mean BPM: 188.1458
-STD of BPM: 31.3139
+```
+Mean Period: 42.5833 frames
+STD of Periods: 27.675 frames
+AI: 0.21119
+Mean BPM: 194.2543
+STD of BPM: 31.9087
 Average Area: 1015.81 µm^2
-Average Min Area: 668.38 µm^2
-STD Min Area: 151.86 µm^2
-Average Max Area: 1328.19 µm^2
-STD Max Area: 72.10 µm^2
-Results saved successfully.
+STD Area: 258.97 µm^2
+Average Systolic Area: 606.24 µm^2
+STD Systolic Area: 118.40 µm^2
+Average Diastolic Area: 1324.39 µm^2
+STD Diastolic Area: 72.55 µm^2
+Fractional Shortening: 54.225%
+Results not saved.
+```
 
 ## IoU Calculator
 Run `IoU_Calculator.m` and when prompted select the original mask first. After selecting the original mask and clicking done, another window should pop up asking you to select the corrected mask. After selecting and clicking done, results will be printed to the command window and a comparative figure will appear. 
