@@ -169,8 +169,7 @@ function updatePlots(slider, value, smoothedData, frameRate, whitePixelCountMatr
     plot(ax1, whitePixelCountMatrix(:, 2), 'b', 'LineWidth', 2);
     hold(ax1, 'on');
     plot(ax1, smoothedData, 'r', 'LineWidth', 2);
-    yline(ax1, averageSmoothedData*mean_corrector_value, '-.g', linewidth=2); 
-    disp(averageSmoothedData*mean_corrector_value)
+    yline(ax1, averageSmoothedData*mean_corrector_value, '-.g', linewidth=2);
     title(ax1, 'Diagnostic Original vs. Smoothed Data');
     xlabel(ax1, 'Frame Number');
     ylabel(ax1, '\mu m^2');
@@ -251,7 +250,7 @@ end
     plot(timeInSeconds, smoothedData, 'r', 'LineWidth', 2);
     title('Change in Heart Area as a Function of Frames',FontWeight='bold',FontSize=15);
     xlabel('Time(seconds)',FontWeight='bold',FontSize=14);
-    ylabel('\mu m^2',FontWeight='bold',FontSize=14);
+    ylabel('Heart Area (\mu m^2)',FontWeight='bold',FontSize=14);
 
     % Plot BPM as a function of time
     figure(2);
